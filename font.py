@@ -2,7 +2,6 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
 
 plt.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei']
 script_path = os.path.abspath(__file__)
@@ -125,7 +124,7 @@ def main():
                         txt = ax.text(c, r, "●",
                                       ha='center', va='center',
                                       fontsize=20,
-                                      color='blue',
+                                      color='gray',
                                       fontweight='bold')
                         ax._dot_texts.append(txt)
 
@@ -146,18 +145,23 @@ def main():
                         score = max(true_count, false_count)
                     if score < best_score:
                         best_score = score
-                        best_pos = (r, c)
-                        best_n = (true_count, false_count)
+                        best_pos = [(r, c)]
+                        best_n = [(true_count, false_count)]
+                    elif score == best_score:
+                        best_pos.append((r, c))
+                        best_n.append((true_count, false_count))
 
         for txt in getattr(ax, '_suggestion_texts', []):
             txt.remove()
         ax._suggestion_texts = []
 
         if best_pos is not None and total > 1:
-            r, c = best_pos
-            txt = ax.text(c, r, f'T{best_n[0]}\nF{best_n[1]}', ha='center', va='center',
-                          fontsize=12, color='red', fontweight='bold')
-            ax._suggestion_texts.append(txt)
+            for pos, n in zip(best_pos, best_n):
+                r, c = pos
+                txt = ax.text(c, r, f'T{n[0]}\nF{n[1]}', ha='center',
+                              va='center', fontsize=14, color='blue',
+                              fontweight='bold')
+                ax._suggestion_texts.append(txt)
 
         im.set_data(display)
         fig.canvas.draw()
