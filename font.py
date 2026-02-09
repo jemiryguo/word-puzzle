@@ -165,6 +165,7 @@ def main():
 
         im.set_data(display)
         fig.canvas.draw()
+        print(info)
 
     def on_click(event):
         if event.inaxes != ax:
